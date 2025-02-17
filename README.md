@@ -55,6 +55,14 @@ BookFlight is a web application designed to simplify the process of booking flig
     docker build -t bookflight .
     docker run -p 3000:3000 bookflight
     ```
+    
+## Database
+No manipulation or editing in database is needed. All necessary data already are contained. In this current version, project is using private database provided by author. 
+
+**Connection: **
+Connection is secured by Singleton design pattern. Connection specifics are written and stored in App.conf, configuration file. 
+Login is required. UserId in this file is 'student' and password 'plane'. In case you want to access admin part in UI console part use Admin mode. Password for this part is 'admin'.
+Admin part includes adding Planes, Flights and removing Users, Flights and Changing Flight departure time. 
 
 ## Usage
 1. **Search Flights:**
@@ -71,31 +79,10 @@ BookFlight is a web application designed to simplify the process of booking flig
     - Make payment through the secure payment gateway.
     - Receive booking confirmation via email.
 
-## Contributing
-We welcome contributions from the community! Please follow these steps to contribute:
-
-1. **Fork the Repository**
-2. **Create a Branch:**
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
-3. **Make Changes and Commit:**
-    ```bash
-    git commit -m "Add your commit message"
-    ```
-4. **Push to the Branch:**
-    ```bash
-    git push origin feature/your-feature-name
-    ```
-5. **Create a Pull Request**
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or inquiries, please reach out to me at:
-- **Email:** niko2357@example.com
-- **LinkedIn:** [linkedin.com/in/niko2357](https://linkedin.com/in/niko2357)
-- **Twitter:** [twitter.com/niko2357](https://twitter.com/niko2357)
-
-Happy flying! ✈️
+For any questions or comments, please reach out to me at:
+- **Email:** niki.polach@gmail.com
