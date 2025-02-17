@@ -27,7 +27,7 @@ namespace BookFlight
                 cmd.Parameters.AddWithValue("@name", plane.name);
                 cmd.Parameters.AddWithValue("@capacity", plane.capacity);
                 cmd.Parameters.AddWithValue("@producer", plane.producer);
-
+                //chat told me this can be int rows = cmd.ExecuteNonQuery(); but I'm not sure if it's correct
                 int rows = cmd.ExecuteNonQuery();
                 if (rows > 0)
                 {
