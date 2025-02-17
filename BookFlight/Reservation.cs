@@ -20,7 +20,7 @@ namespace BookFlight
         public double price { get; set; }
         public bool isPaid { get; set; }
 
-        public Reservation(int id, int flightId, int passengerId, int seatId, int userId, double price, bool isPaid)
+        public Reservation(int flightId, int passengerId, int seatId, int userId, double price, bool isPaid)
         {
             this.id = id;
             this.flightId = flightId;

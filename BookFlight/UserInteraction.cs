@@ -78,6 +78,9 @@ namespace BookFlight
             }
         }
 
+        /// <summary>
+        /// Menu with options for user. User has to log in or register to proceed.
+        /// </summary>
         public void UserPart()
         {
             Console.WriteLine("1) Register");
@@ -99,6 +102,9 @@ namespace BookFlight
             }
         }
 
+        /// <summary>
+        /// Menu with options for user. User can book a flight, cancel a flight, see his reservations or change email.
+        /// </summary>
         public void UserMainPart()
         {
             Console.WriteLine("1) Book a Flight");
@@ -114,6 +120,9 @@ namespace BookFlight
 
                 Console.WriteLine("What email should be the boarding pass send to?");
                 string email = Console.ReadLine();
+                string firstname = "";
+                string lastname = "";
+                DateOnly born = new DateOnly();
 
                 if (CheckPassenger(email))
                 {
@@ -122,22 +131,32 @@ namespace BookFlight
                 else
                 {
                     Console.WriteLine("What's first name of the passenger?");
-                    string firstname = Console.ReadLine();
+                    firstname = Console.ReadLine();
                     Console.WriteLine("What's last name of the passenger?");
-                    string lastname = Console.ReadLine();
+                    lastname = Console.ReadLine();
                     Console.WriteLine("When was the passenger born? (dd.mm.yyyy)");
-                    DateOnly born = new DateOnly();
-
-                    Passenger pas = new Passenger(firstname, lastname, born, email);
-                    db.AddPassenger(pas);
+                    born = new DateOnly();
                 }
-                
-                Console.WriteLine();
-                db.AddReservation();
+                Passenger pas = new Passenger(firstname, lastname, born, email);
+                db.AddPassenger(pas);
+
+                db.AllFlights();
+                Console.WriteLine("What Flight would you like to book a reservation for? (id)");
+                int flightId = int.Parse(Console.ReadLine());
+                db.AllSeats();
+                Console.WriteLine("What seat would you like to book? (id)");
+                int seat = int.Parse(Console.ReadLine());
+                db.AlterSeat(seat);
+                Reservation res = new Reservation(flightId, pas.id, seat, thisUser, 2453.5, false);
+
+                db.AddReservation(res);
             }
             else if (choice == "2")
             {
-                db.RemoveReservation();
+                db.AllReservations(thisUser);
+                Console.WriteLine("Which reservation would you like to cancel? (id)");
+                int id = int.Parse(Console.ReadLine());
+                db.RemoveReservation(id);
             }
             else if(choice == "3")
             {
@@ -145,7 +164,11 @@ namespace BookFlight
             }
             else if(choice == "4")
             {
-                db.AlterUser();
+                Console.WriteLine("Enter your username:");
+                string username = Console.ReadLine();   
+                Console.WriteLine("What's your new email?");
+                string email = Console.ReadLine();
+                db.AlterUser(username, email);
             }
             else
             {
@@ -154,6 +177,11 @@ namespace BookFlight
             }
         }
 
+        /// <summary>
+        /// Checks if passenger's email is already in database.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public bool CheckPassenger(string email)
         {
             SqlConnection conn = DBSingleton.GetInstance();
@@ -172,10 +200,13 @@ namespace BookFlight
                 {
                     return false;
                 }
+                conn.Close();
             }
-            conn.Close();
         }
 
+        /// <summary>
+        /// Logs in user. If input is correct, user is logged in and can proceed to UserMainPart.
+        /// </summary>
         public void LogIn()
         {
             Console.WriteLine("Enter your username:");
@@ -203,9 +234,13 @@ namespace BookFlight
                     Console.WriteLine("Wrong input.");
                     UserPart();
                 }
+                conn.Close();
             }
         }
 
+        /// <summary>
+        /// Registers user. User has to input username, password and email.
+        /// </summary>
         public void Register()
         {
             Console.WriteLine("Hello, here you can register.");
@@ -235,6 +270,7 @@ namespace BookFlight
                 {
                     Console.WriteLine("Something went wrong :(");
                 }
+                conn.Close();
             }
         }
     }

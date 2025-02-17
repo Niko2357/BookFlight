@@ -14,7 +14,7 @@ namespace BookFlight
         public string seatNumber { get; set; }
         public bool isAvailable { get; set; }
 
-        public Seat(int id, int flightId, string seatNumber, bool isAvailable)
+        public Seat(int flightId, string seatNumber, bool isAvailable)
         {
             this.id = id;
             this.flightId = flightId;

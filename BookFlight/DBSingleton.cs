@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace BookFlight
 {
+    /// <summary>
+    /// Class using Singleton pattern to create an instance of the database connection.
+    /// </summary>
     public class DBSingleton
     {
         private static SqlConnection? conn = null;
