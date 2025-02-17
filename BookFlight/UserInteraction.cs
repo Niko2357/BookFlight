@@ -221,6 +221,7 @@ namespace BookFlight
             {
                 cmd.Parameters.AddWithValue("@username", username);
                 cmd.Parameters.AddWithValue("@password", password);
+                //this part from chat
                 object result = cmd.ExecuteScalar();
                 if(result != null)
                 {
