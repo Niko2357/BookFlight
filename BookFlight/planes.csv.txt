@@ -1,0 +1,6 @@
+id,name,capacity,producer
+1,A320,180,Airbus
+2,A321,220,Airbus
+3,737,149,Boeing
+4,CRJ700,78,Bombardier
+5,787_Dreamliner,381,Boeing

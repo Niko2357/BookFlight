@@ -66,7 +66,7 @@ namespace BookFlight
             conn.Close();
         }
 
-        public void RemoveFlight(Flight flight)
+        public void RemoveFlight(int id)
         {
             SqlConnection conn = DBSingleton.GetInstance();
             string com = "DELETE FROM Flight WHERE id = @FlightId;";
@@ -74,7 +74,7 @@ namespace BookFlight
 
             using (SqlCommand cmd = new SqlCommand(com, conn))
             {
-                cmd.Parameters.AddWithValue("@flightId", flight.id);
+                cmd.Parameters.AddWithValue("@flightId", id);
 
                 int rows = cmd.ExecuteNonQuery();
                 if (rows > 0)
@@ -137,7 +137,8 @@ namespace BookFlight
             } 
 
             SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id, flight.flightNumber, flight.departure, flight.arrival, flight.departurePlace, flight.arrivalPlace, seat.seatNumber, price, isPaid FROM Reservation INNER JOIN Flight flight on reservation.flightId = flight.id  INNER JOIN Seat seat on reservation.seatId = seat.id WHERE userId = @userID;";
+            string com = "SELECT id, flight.flightNumber, flight.departure, flight.arrival, flight.departurePlace, flight.arrivalPlace, seat.seatNumber, price, isPaid " +
+                "FROM Reservation INNER JOIN Flight flight on reservation.flightId = flight.id  INNER JOIN Seat seat on reservation.seatId = seat.id WHERE userId = @userID;";
             conn.Open();
             using(SqlCommand cmd = new SqlCommand(com, conn))
             {
@@ -146,21 +147,22 @@ namespace BookFlight
                 {
                     while (reader.Read())
                     {
-                        Console.WriteLine("ID  |  Flight number   |  Departure /  Arrival  |   From  ->   To  |   Seat  | Price |  Transaction   |");
+                        Console.WriteLine("ID  |  Flight number   |  Departure /  Arrival  |   From  ->   To  |   Seat  | Price |  Transaction");
                         Console.WriteLine($"{reader["id"]}  | {reader["flight.flightNumber"]} | {reader["flight.departure"]} / {reader["flight.arrival"]}  | {reader["flight.departurePlace"]} -> {reader["flight.arrivalPlace"]}  | {reader["seat.SeatNumber"]} | {reader["price"]}  | {reader["isPaid"]}");
                     }
                 }
             }
         }
 
-        public void AlterFlight(int flightId, DateTime dateTime)
+        public void AlterFlight(int flightId, DateTime departure, DateTime arrival)
         {
             SqlConnection conn = DBSingleton.GetInstance();
-            string com = "UPDATE Flight SET departure_time = @dateTime WHERE flight_id = @flightId;";
+            string com = "UPDATE Flight SET departure = @departiure arrival = @arrival WHERE flight_id = @flightId;";
             conn.Open();
             using(SqlCommand cmd = new SqlCommand(com, conn))
             {
-                cmd.Parameters.AddWithValue("@dateTime", dateTime);
+                cmd.Parameters.AddWithValue("@departure", departure);
+                cmd.Parameters.AddWithValue("@arrival", arrival);
                 cmd.Parameters.AddWithValue("@flightId", flightId);
 
                 int rows = cmd.ExecuteNonQuery();
@@ -272,14 +274,14 @@ namespace BookFlight
             }
         }
 
-        public void RemoveUser(UserAccount user)
+        public void RemoveUser(string username)
         {
             SqlConnection conn = DBSingleton.GetInstance();
             string com = "DELETE FROM UserAccount WHERE username = @Username;";
             conn.Open();
             using (SqlCommand cmd = new SqlCommand(com, conn))
             {
-                cmd.Parameters.AddWithValue("@Username", user.username);
+                cmd.Parameters.AddWithValue("@Username", username);
 
                 int rows = cmd.ExecuteNonQuery();
                 if (rows > 0)
@@ -295,17 +297,91 @@ namespace BookFlight
             }
         }
 
-        public void AlterPassenger(Passenger passenger, string newMail)
+        public void AlterUser(UserAccount user, string newMail)
         {
             SqlConnection conn = DBSingleton.GetInstance();
-            string com = "UPDATE Passenger SET email = @email WHERE id = @passengerId";
+            string com = "UPDATE UserAccount SET email = @email WHERE username = @username";
             conn.Open();
             using (SqlCommand cmd = new SqlCommand(com, conn))
             {
                 cmd.Parameters.AddWithValue("@email", newMail);
-                cmd.Parameters.AddWithValue("@passengerId", passenger.id);
+                cmd.Parameters.AddWithValue("@username", user.username);
                 cmd.ExecuteNonQuery();
                 conn.Close();
+            }
+        }
+
+        public void AllUsers()
+        {
+            SqlConnection conn = DBSingleton.GetInstance();
+            string com = "SELECT id, username FROM UserAccount;";
+            conn.Open();
+
+            using (SqlCommand cmd = new SqlCommand(com, conn))
+            {
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine("ID  |  Username");
+                        Console.WriteLine($"{reader["id"]}  | {reader["username"]}");
+
+                    }
+                }
+            }
+        }
+
+        
+        public void ImportPlanes(string filepath)
+        {
+            try
+            {
+                using(StreamReader reader = new StreamReader(filepath))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var head = reader.ReadLine();
+                        var line = reader.ReadLine();
+                        var values = line.Split(',');
+                        var com = "INSERT INTO Plane (id, name, capacity, producer) VALUES ('" + values[0] + "','" + values[1] + "'," + values[2] + "'," + values[3] +");";
+                        SqlConnection conn = DBSingleton.GetInstance();
+                        using (SqlCommand cmd = new SqlCommand(com, conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                        conn.Close();
+                    }
+                }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void ImportFlight(string filepath)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(filepath))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var head = reader.ReadLine();
+                        var line = reader.ReadLine();
+                        var values = line.Split(',');
+                        var com = "INSERT INTO Flight (id,flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace) VALUES ('" + values[0] + "','" + values[1] + "'," + values[2] + "'," + values[3] + "'," + values[4] + "'," + values[5] + "'," + values[6] + ");";
+                        SqlConnection conn = DBSingleton.GetInstance();
+                        using (SqlCommand cmd = new SqlCommand(com, conn))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

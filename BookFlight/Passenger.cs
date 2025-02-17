@@ -11,10 +11,10 @@ namespace BookFlight
         public int id { get; set; }
         public string firstname { get; set; }
         public string surname { get; set; }
-        public DateTime birthDate { get; set; }
+        public DateOnly birthDate { get; set; }
         public string email { get; set; }
 
-        public Passenger(int id, string firstname, string surname, DateTime birthDate, string email)
+        public Passenger(string firstname, string surname, DateOnly birthDate, string email)
         {
             this.id = id;
             this.firstname = firstname;

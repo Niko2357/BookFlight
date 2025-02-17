@@ -6,19 +6,10 @@ namespace BookFlight
     {
         static void Main(string[] args)
         {
-            /*try
-            {
-                using (SqlConnection connection = DBSingleton.GetInstance())
-                {
-                    Console.WriteLine("Připojeno k databázi!");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }*/
 
             UserInteraction interact = new UserInteraction();
+            Database dbs = new Database();
+            dbs.ImportPlanes("\\BookFlight\\BookFlight\\planes.csv.txt");
 
             try
             {

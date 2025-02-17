@@ -18,7 +18,7 @@ namespace BookFlight
         public string departurePlace { get; set; }
         public string arrivalPlace { get; set; }
 
-        public Flight()
+        public Flight(string flightNumber, int planeId, DateTime departure, DateTime arrival, string departurePlace, string arrivalPlace)
         {
             this.id = id;
             this.flightNumber = flightNumber;
