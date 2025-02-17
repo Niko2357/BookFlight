@@ -21,8 +21,7 @@ BookFlight is a web application designed to simplify the process of booking flig
 
 ### Prerequisites
 - Node.js (v14.x or later)
-- MongoDB
-- Docker (optional for containerization)
+- MSSQL
 
 ### Steps
 1. **Clone the Repository:**
@@ -33,15 +32,17 @@ BookFlight is a web application designed to simplify the process of booking flig
 
 2. **Install Dependencies:**
     ```bash
-    npm install
+    npm install mssql
     ```
 
 3. **Environment Variables:**
-    Create a `.env` file in the root directory and add the following variables:
+    Create a `.env` file in the root directory or just check values in configuration file and add the following variables:
     ```env
-    PORT=3000
-    MONGODB_URI=your_mongodb_uri
-    JWT_SECRET=your_jwt_secret
+    PORT=1433
+    DB_USER=student
+    DB_PASSWORD=plane
+    DB_SERVER=DESKTOP-OL8TBN9\MYSERVER
+    DB_DATABASE=FlyAir
     ```
 
 4. **Run the Application:**
@@ -49,12 +50,6 @@ BookFlight is a web application designed to simplify the process of booking flig
     npm start
     ```
 
-5. **Docker (Optional):**
-    Build and run the application using Docker:
-    ```bash
-    docker build -t bookflight .
-    docker run -p 3000:3000 bookflight
-    ```
     
 ## Database
 No manipulation or editing in database is needed. All necessary data already are contained. In this current version, project is using private database provided by author. 
