@@ -93,6 +93,9 @@ Connection is secured by Singleton design pattern. Connection specifics are writ
 Login is required. UserId in this file is 'student' and password 'plane'. In case you want to access admin part in UI console part use Admin mode. Password for this part is 'admin'.
 Admin part includes adding Planes, Flights and removing Users, Flights and Changing Flight departure time. 
 
+**Data**
+Only 3 tables include data. Tables flight.csv, planes.csv, seat.csv are located in bin/debug/net8.0 . 
+
 ## Usage
 
 **Upon Entering**
