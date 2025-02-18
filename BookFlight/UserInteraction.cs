@@ -33,9 +33,9 @@ namespace BookFlight
                 Console.WriteLine("What plane will fly this? (id number)");
                 db.AllPlanes();
                 int plane = int.Parse(Console.ReadLine());
-                Console.WriteLine("What's departure date and time? (dd.mm.yyyy hh.mm)");
+                Console.WriteLine("What's departure date and time? (dd.mm.yyyy hh:mm:ss)");
                 DateTime dep = DateTime.Parse(Console.ReadLine());
-                Console.WriteLine("What's arrival date and time? (dd.mm.yyyy hh.mm)");
+                Console.WriteLine("What's arrival date and time? (dd.mm.yyyy hh:mm:ss)");
                 DateTime arr = DateTime.Parse(Console.ReadLine());
                 Console.WriteLine("Where is it flying from?");
                 string depPlace = Console.ReadLine();
@@ -65,16 +65,16 @@ namespace BookFlight
                 db.AllFlights();
                 Console.WriteLine("Which flight time would you like to update? (id)");
                 int flightId = int.Parse(Console.ReadLine());
-                Console.WriteLine("What time will the plane depart? (dd.mm.yyyy hh.mm)");
+                Console.WriteLine("What time will the plane depart? (dd.mm.yyyy hh:mm:ss)");
                 DateTime depart = DateTime.Parse(Console.ReadLine());
-                Console.WriteLine("What time will the plane arrive? (dd.mm.yyyy hh.mm)");
+                Console.WriteLine("What time will the plane arrive? (dd.mm.yyyy hh:mm:ss)");
                 DateTime arrive = DateTime.Parse(Console.ReadLine());
                 db.AlterFlight(flightId, depart, arrive);
             }
             else
             {
                 Console.WriteLine("That's not an option.");
-
+                AdminPart();
             }
         }
 

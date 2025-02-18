@@ -20,6 +20,7 @@ namespace BookFlight
 
         public static SqlConnection GetInstance()
         {
+            
             if (conn == null)
             {
                 SqlConnectionStringBuilder stringBuilder = new SqlConnectionStringBuilder();
@@ -33,6 +34,7 @@ namespace BookFlight
                 conn = new SqlConnection(stringBuilder.ConnectionString);
                 conn.Open();
             }
+            
             return conn;
         }
 

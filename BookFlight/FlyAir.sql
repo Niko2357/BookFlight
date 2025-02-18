@@ -1,20 +1,20 @@
 ﻿use FlyAir;
 
 create table Plane(
-id int primary key identity(1,1),
+id int primary key,
 name varchar(50), 
 capacity int, 
 producer varchar(50)
 );
 
 create table Flight(
-id int primary key identity(1,1),
+id int primary key,
 flightNumber varchar(30), 
 planeId int foreign key references Plane(id),
 departure datetime, 
 arrival datetime, 
-departurePlace varchar(50),
-arrivalPlace varchar(50)
+departurePlace varchar(200),
+arrivalPlace varchar(200)
 );
 
 create table Passenger(
@@ -33,9 +33,9 @@ role varchar(30) check(role in('admin', 'customer'))
 );
 
 create table Seat(
-id int primary key identity(1,1),
+id int primary key,
 flightId int foreign key references Flight(id),
-number varchar(30) not null,
+seatNumber varchar(30) not null,
 isAvailable bit default 1
 );
 

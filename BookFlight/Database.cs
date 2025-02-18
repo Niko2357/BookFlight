@@ -18,28 +18,37 @@ namespace BookFlight
         /// <param name="plane"></param>
         public void AddPlane(Plane plane)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO Plane (name, capacity, producer) VALUES (@name, @capacity, @producer);";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@name", plane.name);
-                cmd.Parameters.AddWithValue("@capacity", plane.capacity);
-                cmd.Parameters.AddWithValue("@producer", plane.producer);
-                //chat told me this can be int rows = cmd.ExecuteNonQuery(); but I'm not sure if it's correct
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    Console.WriteLine("Plane Successfuly added.");
+                    conn.Open();
                 }
-                else
+                string com = "INSERT INTO Plane (name, capacity, producer) VALUES (@name, @capacity, @producer);";
+
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    Console.WriteLine("This Plane couldn't be added.");
+                    cmd.Parameters.AddWithValue("@name", plane.name);
+                    cmd.Parameters.AddWithValue("@capacity", plane.capacity);
+                    cmd.Parameters.AddWithValue("@producer", plane.producer);
+                    //chat told me this can be int rows = cmd.ExecuteNonQuery(); but I'm not sure if it's correct
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Plane Successfuly added.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Plane couldn't be added.");
+                    }
                 }
-                conn.Close();
             }
-        }
+            if(conn.State == System.Data.ConnectionState.Open)
+                {
+                    conn.Close();
+                }
+            }
 
         /// <summary>
         /// Adds a flight to the database.
@@ -47,28 +56,37 @@ namespace BookFlight
         /// <param name="flight"></param>
         public void AddFlight(Flight flight)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO Flight (flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace) VALUES (@flightNumber, @planeId, @departure, @arrival, @departurePlace, @arrivalPlace);";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@flightNumber", flight.flightNumber);
-                cmd.Parameters.AddWithValue("@planeId", flight.planeId);
-                cmd.Parameters.AddWithValue("@departure", flight.departure);
-                cmd.Parameters.AddWithValue("@arrival", flight.arrival);
-                cmd.Parameters.AddWithValue("@departurePlace", flight.departurePlace);
-                cmd.Parameters.AddWithValue("@arrivalPlace", flight.arrivalPlace);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "INSERT INTO Flight (flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace) VALUES (@flightNumber, @planeId, @departure, @arrival, @departurePlace, @arrivalPlace);";
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    Console.WriteLine("Flight Successfuly added.");
+                    cmd.Parameters.AddWithValue("@flightNumber", flight.flightNumber);
+                    cmd.Parameters.AddWithValue("@planeId", flight.planeId);
+                    cmd.Parameters.AddWithValue("@departure", flight.departure);
+                    cmd.Parameters.AddWithValue("@arrival", flight.arrival);
+                    cmd.Parameters.AddWithValue("@departurePlace", flight.departurePlace);
+                    cmd.Parameters.AddWithValue("@arrivalPlace", flight.arrivalPlace);
+
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Flight Successfuly added.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Flight couldn't be added.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This Flight couldn't be added.");
-                }
+            }
+            if (conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -79,23 +97,31 @@ namespace BookFlight
         /// <param name="id"></param>
         public void RemoveFlight(int id)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "DELETE FROM Flight WHERE id = @FlightId;";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@flightId", id);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "DELETE FROM Flight WHERE id = @FlightId;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@flightId", id);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("Flight Successfuly deleted.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Flight Successfuly deleted.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This flight doesn't exist.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This flight doesn't exist.");
-                }
+            }
+            if (conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -105,24 +131,33 @@ namespace BookFlight
         /// </summary>
         public void AllFlights()
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id, flightNumber, departure, arrival, departurePlace, arrivalPlace from Flight;";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    while (reader.Read())
+                    conn.Open();
+                }
+                string com = "SELECT id, flightNumber, departure, arrival, departurePlace, arrivalPlace from Flight;";
+                
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        Console.WriteLine("ID  |  Flight Number  | Departure /  Arrival  |   From  ->   To");
-                        //the reader part is from chat (french cat)
-                        Console.WriteLine($"{reader["id"]}  | {reader["flightNumber"]} | {reader["departure"]} / {reader["arrival"]} | {reader["deparure"]} ->  {reader["arrival"]}");
+                        while (reader.Read())
+                        {
+                            Console.WriteLine("ID  |  Flight Number  | Departure /  Arrival  |   From  ->   To");
+                            //the reader part is from chat (french cat)
+                            Console.WriteLine($"{reader["id"]}  | {reader["flightNumber"]} | {reader["departure"]} / {reader["arrival"]} | {reader["deparure"]} ->  {reader["arrival"]}");
 
+                        }
                     }
                 }
             }
-            conn.Close();
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
+                conn.Close();
+            }
         }
 
         /// <summary>
@@ -130,9 +165,14 @@ namespace BookFlight
         /// </summary>
         public void AllPlanes()
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id, name, capacity, producer from Plane;";
-            conn.Open();
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
+            {
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "SELECT id, name, capacity, producer from Plane;";
 
             using (SqlCommand cmd = new SqlCommand(com, conn))
             {
@@ -146,7 +186,11 @@ namespace BookFlight
                     }
                 }
             }
-            conn.Close();
+        }
+            if (conn.State == System.Data.ConnectionState.Open)
+            {
+                conn.Close();
+            }
         }
 
         /// <summary>
@@ -158,25 +202,34 @@ namespace BookFlight
             if(userId == 0)
             {
                 Console.WriteLine("You have to log in.");
-            } 
+            }
 
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id, flight.flightNumber, flight.departure, flight.arrival, flight.departurePlace, flight.arrivalPlace, seat.seatNumber, price, isPaid " +
-                "FROM Reservation INNER JOIN Flight flight on reservation.flightId = flight.id  INNER JOIN Seat seat on reservation.seatId = seat.id WHERE userId = @userID;";
-            conn.Open();
-            using(SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@userID", userId);
-                using(SqlDataReader reader = cmd.ExecuteReader())
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    while (reader.Read())
+                    conn.Open();
+                }
+                string com = "SELECT id, flight.flightNumber, flight.departure, flight.arrival, flight.departurePlace, flight.arrivalPlace, seat.seatNumber, price, isPaid " +
+                "FROM Reservation INNER JOIN Flight flight on reservation.flightId = flight.id  INNER JOIN Seat seat on reservation.seatId = seat.id WHERE userId = @userID;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userID", userId);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        Console.WriteLine("ID  |  Flight number   |  Departure /  Arrival  |   From  ->   To  |   Seat  | Price |  Transaction");
-                        Console.WriteLine($"{reader["id"]}  | {reader["flight.flightNumber"]} | {reader["flight.departure"]} / {reader["flight.arrival"]}  | {reader["flight.departurePlace"]} -> {reader["flight.arrivalPlace"]}  | {reader["seat.SeatNumber"]} | {reader["price"]}  | {reader["isPaid"]}");
+                        while (reader.Read())
+                        {
+                            Console.WriteLine("ID  |  Flight number   |  Departure /  Arrival  |   From  ->   To  |   Seat  | Price |  Transaction");
+                            Console.WriteLine($"{reader["id"]}  | {reader["flight.flightNumber"]} | {reader["flight.departure"]} / {reader["flight.arrival"]}  | {reader["flight.departurePlace"]} -> {reader["flight.arrivalPlace"]}  | {reader["seat.SeatNumber"]} | {reader["price"]}  | {reader["isPaid"]}");
+                        }
                     }
                 }
             }
-            conn.Close();
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
+                conn.Close();
+            }
         }
 
         /// <summary>
@@ -187,24 +240,33 @@ namespace BookFlight
         /// <param name="arrival"></param>
         public void AlterFlight(int flightId, DateTime departure, DateTime arrival)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "UPDATE Flight SET departure = @departiure arrival = @arrival WHERE id = @flightId;";
-            conn.Open();
-            using(SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@departure", departure);
-                cmd.Parameters.AddWithValue("@arrival", arrival);
-                cmd.Parameters.AddWithValue("@flightId", flightId);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "UPDATE Flight SET departure = @departiure arrival = @arrival WHERE id = @flightId;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@departure", departure);
+                    cmd.Parameters.AddWithValue("@arrival", arrival);
+                    cmd.Parameters.AddWithValue("@flightId", flightId);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("Flight Successfuly updated.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Flight Successfuly updated.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This flight doesn't exist.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This flight doesn't exist.");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -215,27 +277,36 @@ namespace BookFlight
         /// <param name="reservation"></param>
         public void AddReservation(Reservation reservation)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO Reservation (flightId, passengerId, userId, seatId, price, isPaid) VALUES (@flightId, @passengerId, @userId, @seatId, @price, @isPaid);";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@flightId", reservation.flightId);
-                cmd.Parameters.AddWithValue("@passengerId", reservation.passengerId);
-                cmd.Parameters.AddWithValue("@userId", reservation.userId);
-                cmd.Parameters.AddWithValue("@seatId", reservation.seatId);
-                cmd.Parameters.AddWithValue("@price", reservation.price);
-                cmd.Parameters.AddWithValue("@isPaid", reservation.isPaid);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "INSERT INTO Reservation (flightId, passengerId, userId, seatId, price, isPaid) VALUES (@flightId, @passengerId, @userId, @seatId, @price, @isPaid);";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@flightId", reservation.flightId);
+                    cmd.Parameters.AddWithValue("@passengerId", reservation.passengerId);
+                    cmd.Parameters.AddWithValue("@userId", reservation.userId);
+                    cmd.Parameters.AddWithValue("@seatId", reservation.seatId);
+                    cmd.Parameters.AddWithValue("@price", reservation.price);
+                    cmd.Parameters.AddWithValue("@isPaid", reservation.isPaid);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("Reservation Successfuly added.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Reservation Successfuly added.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Reservation couldn't be made.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This Reservation couldn't be made.");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -246,23 +317,32 @@ namespace BookFlight
         /// <param name="id"></param>
         public void AlterSeat(int id)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "UPDATE Seat SET isAvailable = @false WHERE id = @flightId;";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@false", false);
-                cmd.Parameters.AddWithValue("@flightId", id);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "UPDATE Seat SET isAvailable = @false WHERE id = @flightId;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@false", false);
+                    cmd.Parameters.AddWithValue("@flightId", id);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("Seat Successfuly updated.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Seat Successfuly updated.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Seat doesn't exist.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This Seat doesn't exist.");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -273,9 +353,14 @@ namespace BookFlight
         /// <param name="id"></param>
         public void RemoveReservation(int id)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "DELETE FROM Reservation WHERE id = @ReservationId;";
-            conn.Open();
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
+            {
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "DELETE FROM Reservation WHERE id = @ReservationId;";
             using (SqlCommand cmd = new SqlCommand(com, conn))
             {
                 cmd.Parameters.AddWithValue("@ReservationId", id);
@@ -289,6 +374,10 @@ namespace BookFlight
                 {
                     Console.WriteLine("This Reservation doesn't exist.");
                 }
+            }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -299,25 +388,34 @@ namespace BookFlight
         /// <param name="passenger"></param>
         public void AddPassenger(Passenger passenger)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO Passenger (firstname, surname, birthDate, email) VALUES (@firstname, @surname, @birthDate, @email);";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@firstname", passenger.firstname);
-                cmd.Parameters.AddWithValue("@surname", passenger.surname);
-                cmd.Parameters.AddWithValue("@birthDate", passenger.birthDate);
-                cmd.Parameters.AddWithValue("@email", passenger.email);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "INSERT INTO Passenger (firstname, surname, birthDate, email) VALUES (@firstname, @surname, @birthDate, @email);";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@firstname", passenger.firstname);
+                    cmd.Parameters.AddWithValue("@surname", passenger.surname);
+                    cmd.Parameters.AddWithValue("@birthDate", passenger.birthDate);
+                    cmd.Parameters.AddWithValue("@email", passenger.email);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("Passenger Successfuly added.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("Passenger Successfuly added.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This Passenger doesn't exist.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This Passenger doesn't exist.");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -328,23 +426,32 @@ namespace BookFlight
         /// <param name="user"></param>
         public void AddUser(UserAccount user)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO UserAccount (username, password) VALUES (@username, @password);";
-            conn.Open();
-            using(SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@username", user.username);
-                cmd.Parameters.AddWithValue("@password", user.password);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "INSERT INTO UserAccount (username, password) VALUES (@username, @password);";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", user.username);
+                    cmd.Parameters.AddWithValue("@password", user.password);
 
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
-                {
-                    Console.WriteLine("User Successfuly added.");
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("User Successfuly added.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This User doesn't exist.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("This User doesn't exist.");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -355,23 +462,31 @@ namespace BookFlight
         /// <param name="username"></param>
         public void RemoveUser(string username)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "DELETE FROM UserAccount WHERE username = @Username;";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@Username", username);
-
-                int rows = cmd.ExecuteNonQuery();
-                if (rows > 0)
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    Console.WriteLine("User Successfuly removed.");
+                    conn.Open();
                 }
-                else
+                string com = "DELETE FROM UserAccount WHERE username = @Username;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    Console.WriteLine("This User doesn't exist.");
-                }
+                    cmd.Parameters.AddWithValue("@Username", username);
 
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("User Successfuly removed.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("This User doesn't exist.");
+                    }
+                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -383,14 +498,23 @@ namespace BookFlight
         /// <param name="newMail"></param>
         public void AlterUser(string username, string newMail)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "UPDATE UserAccount SET email = @email WHERE username = @username";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@email", newMail);
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.ExecuteNonQuery();
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "UPDATE UserAccount SET email = @email WHERE username = @username";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@email", newMail);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -400,23 +524,31 @@ namespace BookFlight
         /// </summary>
         public void AllUsers()
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id, username FROM UserAccount;";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    while (reader.Read())
+                    conn.Open();
+                }
+                string com = "SELECT id, username FROM UserAccount;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        Console.WriteLine("ID  |  Username");
-                        Console.WriteLine($"{reader["id"]}  | {reader["username"]}");
+                        while (reader.Read())
+                        {
+                            Console.WriteLine("ID  |  Username");
+                            Console.WriteLine($"{reader["id"]}  | {reader["username"]}");
 
+                        }
                     }
                 }
             }
-            conn.Close();
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
+                conn.Close();
+            }
         }
 
         /// <summary>
@@ -424,94 +556,71 @@ namespace BookFlight
         /// </summary>
         public void AllSeats()
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT seatNumber, isAvailable FROM Seat;";
-            conn.Open();
-
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    while (reader.Read())
-                    {
-                        Console.WriteLine("Seat Number |  Availability");
-                        Console.WriteLine($"{reader["seatNumber"]}  | {reader["isAvailable"]}");
-
-                    }
+                    conn.Open();
                 }
-            }
-            conn.Close();
-        }
-
-        /// <summary>
-        /// Imports data into Planes table from a file.
-        /// </summary>
-        /// <param name="filepath"></param>
-        public void ImportPlanes(string filepath)
-        {
-            try
-            {
-                SqlConnection conn = DBSingleton.GetInstance();
-                using (StreamReader reader = new StreamReader(filepath))
+                string com = "SELECT seatNumber, isAvailable FROM Seat;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    while (!reader.EndOfStream)
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        string head = reader.ReadLine();
-                        string line = reader.ReadLine();
-                        var values = line.Split(',');
-                        string com = "INSERT INTO Plane (name, capacity, producer) " +
-                                 "VALUES (@name, @capacity, @producer)";
-                        using (SqlCommand cmd = new SqlCommand(com, conn))
+                        while (reader.Read())
                         {
-                            cmd.Parameters.AddWithValue("@name", values[0]);
-                            cmd.Parameters.AddWithValue("@capacity", values[1]);
-                            cmd.Parameters.AddWithValue("@producer", values[2]);
+                            Console.WriteLine("Seat Number |  Availability");
+                            Console.WriteLine($"{reader["seatNumber"]}  | {reader["isAvailable"]}");
 
-                            cmd.ExecuteNonQuery();
                         }
                     }
                 }
-                conn.Close();
             }
-            catch(Exception ex)
+            if(conn.State == System.Data.ConnectionState.Open)
             {
-                Console.WriteLine(ex.Message);
+                conn.Close();
             }
         }
 
         /// <summary>
-        /// Imports data into Flights table from a file.
+        /// Imports data into Planes table from a csv file.
+        /// Partly chats work, the checking.
         /// </summary>
         /// <param name="filepath"></param>
-        public void ImportFlight(string filepath)
+        public void ImportPlanes(string filepath, SqlConnection conn)
         {
             try
             {
-                SqlConnection conn = DBSingleton.GetInstance();
                 using (StreamReader reader = new StreamReader(filepath))
                 {
+                    string head = reader.ReadLine();
                     while (!reader.EndOfStream)
                     {
-                        string head = reader.ReadLine();
                         string line = reader.ReadLine();
                         var values = line.Split(',');
-                        var com = "INSERT INTO Flight (id, flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace" + 
-                            "VALUES (@id, @flightNumber, @planeId, @departure, @arrival, @departurePlace, @arrivalPlace);";
-                        using (SqlCommand cmd = new SqlCommand(com, conn))
+                        string checkExistence = "SELECT COUNT(*) FROM Plane WHERE id = @id";
+                        using (SqlCommand cmdCheck = new SqlCommand(checkExistence, conn))
                         {
-                            cmd.Parameters.AddWithValue("@id", values[0]);
-                            cmd.Parameters.AddWithValue("@flightNumber", values[1]);
-                            cmd.Parameters.AddWithValue("@planeId", values[2]);
-                            cmd.Parameters.AddWithValue("@departure", values[3]);
-                            cmd.Parameters.AddWithValue("@arrival", values[4]);
-                            cmd.Parameters.AddWithValue("@departurePlace", values[5]);
-                            cmd.Parameters.AddWithValue("@arrivalPlace", values[6]);
+                            cmdCheck.Parameters.AddWithValue("@id", values[0]);
+                            int count = (int)cmdCheck.ExecuteScalar(); 
+                            if (count == 0) 
+                            {
+                                string com = "INSERT INTO Plane (id, name, capacity, producer) " +
+                                             "VALUES (@id, @name, @capacity, @producer)";
+                                using (SqlCommand cmd = new SqlCommand(com, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", values[0]);
+                                    cmd.Parameters.AddWithValue("@name", values[1]);
+                                    cmd.Parameters.AddWithValue("@capacity", values[2]);
+                                    cmd.Parameters.AddWithValue("@producer", values[3]);
 
-                            cmd.ExecuteNonQuery();
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
                         }
                     }
                 }
-                conn.Close();
             }
             catch (Exception ex)
             {
@@ -520,34 +629,96 @@ namespace BookFlight
         }
 
         /// <summary>
-        /// Imports data into Seats table from a file.
+        /// Imports data into Flights table from a csv file.
+        /// Partly chats work, the checking.
         /// </summary>
         /// <param name="filepath"></param>
-        public void ImportSeat(string filepath)
+        public void ImportFlight(string filepath, SqlConnection conn)
         {
             try
             {
-                SqlConnection conn = DBSingleton.GetInstance();
                 using (StreamReader reader = new StreamReader(filepath))
                 {
+                    string head = reader.ReadLine();
                     while (!reader.EndOfStream)
                     {
-                        string head = reader.ReadLine();
                         string line = reader.ReadLine();
                         var values = line.Split(',');
-                        string com = "INSERT INTO Seat (flightId, seatNumber, isAvailable) " +
-                                 "VALUES (@flightId, @seatNumber, @isAvailable)";
-
-                        using (SqlCommand cmd = new SqlCommand(com, conn))
+                        string checkExistence = "SELECT COUNT(*) FROM Flight WHERE id = @id";
+                        using (SqlCommand cmdCheck = new SqlCommand(checkExistence, conn))
                         {
-                            cmd.Parameters.AddWithValue("@flightId", values[0]);      
-                            cmd.Parameters.AddWithValue("@seatNumber", values[1]);    
-                            cmd.Parameters.AddWithValue("@isAvailable", values[2]);
-                            cmd.ExecuteNonQuery();
+                            cmdCheck.Parameters.AddWithValue("@id", values[0]);
+                            cmdCheck.Parameters.AddWithValue("@flightNumber", values[1]);
+                            cmdCheck.Parameters.AddWithValue("@planeId", values[2]);
+                            int count = (int)cmdCheck.ExecuteScalar(); 
+                            if (count == 0) 
+                            {
+                                string com = "INSERT INTO Flight (id, flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace) " +
+                                             "VALUES (@id, @flightNumber, @planeId, @departure, @arrival, @departurePlace, @arrivalPlace);";
+                                using (SqlCommand cmd = new SqlCommand(com, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", values[0]);
+                                    cmd.Parameters.AddWithValue("@flightNumber", values[1]);
+                                    cmd.Parameters.AddWithValue("@planeId", values[2]);
+                                    cmd.Parameters.AddWithValue("@departure", values[3]);
+                                    cmd.Parameters.AddWithValue("@arrival", values[4]);
+                                    cmd.Parameters.AddWithValue("@departurePlace", values[5]);
+                                    cmd.Parameters.AddWithValue("@arrivalPlace", values[6]);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                    }
+
+                }  
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Imports data into Seats table from a csv file.
+        /// </summary>
+        /// <param name="filepath"></param>
+        public void ImportSeat(string filepath, SqlConnection conn)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(filepath))
+                {
+                    string head = reader.ReadLine();
+                    while (!reader.EndOfStream)
+                    {
+                        string line = reader.ReadLine();
+                        var values = line.Split(',');
+                        string checkExistence = "SELECT COUNT(*) FROM Seat WHERE id = @id";
+                        using (SqlCommand cmdCheck = new SqlCommand(checkExistence, conn))
+                        {
+                            cmdCheck.Parameters.AddWithValue("@id", values[0]);
+                            cmdCheck.Parameters.AddWithValue("@flightId", values[1]);
+                            cmdCheck.Parameters.AddWithValue("@seatNumber", values[2]);
+                            int count = (int)cmdCheck.ExecuteScalar();
+                            if (count == 0) 
+                            {
+                                string com = "INSERT INTO Seat (id, flightId, seatNumber, isAvailable) " +
+                                             "VALUES (@id, @flightId, @seatNumber, @isAvailable)";
+                                using (SqlCommand cmd = new SqlCommand(com, conn))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", values[0]);
+                                    cmd.Parameters.AddWithValue("@flightId", values[1]);
+                                    cmd.Parameters.AddWithValue("@seatNumber", values[2]);
+                                    bool avail = bool.Parse(values[3]);
+                                    cmd.Parameters.AddWithValue("@isAvailable", avail);
+
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
                         }
                     }
                 }
-                conn.Close();
             }
             catch (Exception ex)
             {

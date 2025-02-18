@@ -9,12 +9,32 @@ namespace BookFlight
 
             UserInteraction interact = new UserInteraction();
             Database dbs = new Database();
-            dbs.ImportPlanes("planes.csv");
-            /*dbs.ImportFlight("\\BookFlight\\BookFlight\\flight.csv");
-            dbs.ImportSeat("\\BookFlight\\BookFlight\\seat.csv");*/
+
+            /*using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+            try
+            {
+                conn.Open();
+                Console.WriteLine("Connected successfuly.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("No connection.");
+            }
+            }
+            }*/
+
 
             try
             {
+                ///importing of data from csv files
+                /*using (SqlConnection conn = DBSingleton.GetInstance())
+                {
+                    dbs.ImportPlanes("planes.csv", conn);
+                    dbs.ImportFlight("flight.csv", conn);
+                    dbs.ImportSeat("seat.csv", conn);
+                }*/
+
                 Console.WriteLine("1) Admin");
                 Console.WriteLine("2) Guest");
                 string choice = Console.ReadLine();
