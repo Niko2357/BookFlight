@@ -13,8 +13,8 @@ flightNumber varchar(30),
 planeId int foreign key references Plane(id),
 departure datetime, 
 arrival datetime, 
-departurePlace varchar(200),
-arrivalPlace varchar(200)
+departurePlace varchar(255),
+arrivalPlace varchar(255)
 );
 
 create table Passenger(
@@ -28,8 +28,8 @@ email varchar(50) check(email like('%@%.%'))
 create table UserAccount(
 id int primary key identity(1,1),
 username varchar(50) unique not null,
-password varchar(50) not null, 
-role varchar(30) check(role in('admin', 'customer'))
+password varchar(50) not null,
+email varchar(50) check(email like('%@%.%'))
 );
 
 create table Seat(

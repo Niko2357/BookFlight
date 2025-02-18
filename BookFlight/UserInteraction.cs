@@ -111,6 +111,7 @@ namespace BookFlight
             Console.WriteLine("2) Cancel a Flight");
             Console.WriteLine("3) My Reservations");
             Console.WriteLine("4) Change email");
+            Console.WriteLine("5) See Flights");
             string choice = Console.ReadLine();
 
             if (choice == "1")
@@ -170,6 +171,10 @@ namespace BookFlight
                 string email = Console.ReadLine();
                 db.AlterUser(username, email);
             }
+            else if(choice == "5")
+            {
+                db.AllFlights();
+            }
             else
             {
                 Console.WriteLine("That's not an option.");
@@ -184,22 +189,31 @@ namespace BookFlight
         /// <returns></returns>
         public bool CheckPassenger(string email)
         {
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id FROM Passenger WHERE email = @email;";
-            conn.Open();
-            using(SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@email", email);
-                object existingPasId = cmd.ExecuteScalar();
-                if (existingPasId != null)
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    Console.WriteLine("Passengers number is " + existingPasId);
-                    return true;
+                    conn.Open();
                 }
-                else
+                string com = "SELECT id FROM Passenger WHERE email = @email;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    return false;
+                    cmd.Parameters.AddWithValue("@email", email);
+                    object existingPasId = cmd.ExecuteScalar();
+                    if (existingPasId != null)
+                    {
+                        Console.WriteLine("Passengers number is " + existingPasId);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -214,27 +228,36 @@ namespace BookFlight
             Console.WriteLine("Enter your password:");
             string password = Console.ReadLine();
 
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "SELECT id FROM UserAccount WHERE username = @username AND password = @password;";
-            conn.Open();
-            using (SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password);
-                //this part from chat
-                object result = cmd.ExecuteScalar();
-                if(result != null)
+                if (conn.State == System.Data.ConnectionState.Closed)
                 {
-                    int idUser = Convert.ToInt32(result);
-                    Console.WriteLine("You're now loged in.");
-                    thisUser = idUser;
-                    UserMainPart();
+                    conn.Open();
                 }
-                else
+                string com = "SELECT id FROM UserAccount WHERE username = @username AND password = @password;";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
                 {
-                    Console.WriteLine("Wrong input.");
-                    UserPart();
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+                    //this part from chat
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        int idUser = Convert.ToInt32(result);
+                        Console.WriteLine("You're now loged in.");
+                        thisUser = idUser;
+                        UserMainPart();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Wrong input.");
+                        UserPart();
+                    }
                 }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }
@@ -252,25 +275,34 @@ namespace BookFlight
             Console.WriteLine("Your email:");
             string email = Console.ReadLine();
 
-            SqlConnection conn = DBSingleton.GetInstance();
-            string com = "INSERT INTO UserAccount (username, password, email) VALUES (@username, @password, @email);";
-            conn.Open();
-            using(SqlCommand cmd = new SqlCommand(com, conn))
+            SqlConnection conn = null;
+            using (conn = DBSingleton.GetInstance())
             {
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password);
-                cmd.Parameters.AddWithValue("@email", email);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+                string com = "INSERT INTO UserAccount (username, password, email) VALUES (@username, @password, @email);";
+                using (SqlCommand cmd = new SqlCommand(com, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+                    cmd.Parameters.AddWithValue("@email", email);
 
-                int rows = cmd.ExecuteNonQuery();
-                if(rows > 0)
-                {
-                    Console.WriteLine("You were successfuly registered. Please Log in");
-                    UserPart();
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        Console.WriteLine("You were successfuly registered. Please Log in");
+                        UserPart();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong :(");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("Something went wrong :(");
-                }
+            }
+            if(conn.State == System.Data.ConnectionState.Open)
+            {
                 conn.Close();
             }
         }

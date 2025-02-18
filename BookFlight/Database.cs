@@ -147,8 +147,8 @@ namespace BookFlight
                         while (reader.Read())
                         {
                             Console.WriteLine("ID  |  Flight Number  | Departure /  Arrival  |   From  ->   To");
-                            //the reader part is from chat (french cat)
-                            Console.WriteLine($"{reader["id"]}  | {reader["flightNumber"]} | {reader["departure"]} / {reader["arrival"]} | {reader["deparure"]} ->  {reader["arrival"]}");
+                            //the reader part is from chat (french cat "šat")
+                            Console.WriteLine($"{reader["id"]}  | {reader["flightNumber"]} | {reader["departure"]} / {reader["arrival"]} | {reader["deparurePlace"]} ->  {reader["arrivalPlace"]}");
 
                         }
                     }
