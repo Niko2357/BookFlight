@@ -451,23 +451,29 @@ namespace BookFlight
         {
             try
             {
-                using(StreamReader reader = new StreamReader(filepath))
+                SqlConnection conn = DBSingleton.GetInstance();
+                using (StreamReader reader = new StreamReader(filepath))
                 {
                     while (!reader.EndOfStream)
                     {
-                        var head = reader.ReadLine();
-                        var line = reader.ReadLine();
+                        string head = reader.ReadLine();
+                        string line = reader.ReadLine();
                         var values = line.Split(',');
-                        var com = "INSERT INTO Plane (id, name, capacity, producer) VALUES ('" + values[0] + "','" + values[1] + "'," + values[2] + "'," + values[3] +");";
-                        SqlConnection conn = DBSingleton.GetInstance();
+                        string com = "INSERT INTO Plane (name, capacity, producer) " +
+                                 "VALUES (@name, @capacity, @producer)";
                         using (SqlCommand cmd = new SqlCommand(com, conn))
                         {
+                            cmd.Parameters.AddWithValue("@name", values[0]);
+                            cmd.Parameters.AddWithValue("@capacity", values[1]);
+                            cmd.Parameters.AddWithValue("@producer", values[2]);
+
                             cmd.ExecuteNonQuery();
                         }
-                        conn.Close();
                     }
                 }
-            }catch(Exception ex)
+                conn.Close();
+            }
+            catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -481,22 +487,31 @@ namespace BookFlight
         {
             try
             {
+                SqlConnection conn = DBSingleton.GetInstance();
                 using (StreamReader reader = new StreamReader(filepath))
                 {
                     while (!reader.EndOfStream)
                     {
-                        var head = reader.ReadLine();
-                        var line = reader.ReadLine();
+                        string head = reader.ReadLine();
+                        string line = reader.ReadLine();
                         var values = line.Split(',');
-                        var com = "INSERT INTO Flight (id,flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace) VALUES ('" + values[0] + "','" + values[1] + "'," + values[2] + "'," + values[3] + "'," + values[4] + "'," + values[5] + "'," + values[6] + ");";
-                        SqlConnection conn = DBSingleton.GetInstance();
+                        var com = "INSERT INTO Flight (id, flightNumber, planeId, departure, arrival, departurePlace, arrivalPlace" + 
+                            "VALUES (@id, @flightNumber, @planeId, @departure, @arrival, @departurePlace, @arrivalPlace);";
                         using (SqlCommand cmd = new SqlCommand(com, conn))
                         {
+                            cmd.Parameters.AddWithValue("@id", values[0]);
+                            cmd.Parameters.AddWithValue("@flightNumber", values[1]);
+                            cmd.Parameters.AddWithValue("@planeId", values[2]);
+                            cmd.Parameters.AddWithValue("@departure", values[3]);
+                            cmd.Parameters.AddWithValue("@arrival", values[4]);
+                            cmd.Parameters.AddWithValue("@departurePlace", values[5]);
+                            cmd.Parameters.AddWithValue("@arrivalPlace", values[6]);
+
                             cmd.ExecuteNonQuery();
                         }
-                        conn.Close();
                     }
                 }
+                conn.Close();
             }
             catch (Exception ex)
             {
@@ -512,22 +527,27 @@ namespace BookFlight
         {
             try
             {
+                SqlConnection conn = DBSingleton.GetInstance();
                 using (StreamReader reader = new StreamReader(filepath))
                 {
                     while (!reader.EndOfStream)
                     {
-                        var head = reader.ReadLine();
-                        var line = reader.ReadLine();
+                        string head = reader.ReadLine();
+                        string line = reader.ReadLine();
                         var values = line.Split(',');
-                        var com = "INSERT INTO Seat (flightId, seatNumber, isAvailable) VALUES ('" + values[0] + "','" + values[1] + "'," + values[2] + ");";
-                        SqlConnection conn = DBSingleton.GetInstance();
+                        string com = "INSERT INTO Seat (flightId, seatNumber, isAvailable) " +
+                                 "VALUES (@flightId, @seatNumber, @isAvailable)";
+
                         using (SqlCommand cmd = new SqlCommand(com, conn))
                         {
+                            cmd.Parameters.AddWithValue("@flightId", values[0]);      
+                            cmd.Parameters.AddWithValue("@seatNumber", values[1]);    
+                            cmd.Parameters.AddWithValue("@isAvailable", values[2]);
                             cmd.ExecuteNonQuery();
                         }
-                        conn.Close();
                     }
                 }
+                conn.Close();
             }
             catch (Exception ex)
             {
