@@ -85,10 +85,16 @@ The database schema includes the following tables:
 - `Seat`: Stores information about seats on a plane, such as seat number and availability.
 - `Reservation`: Stores information about flight reservations, such as flight ID, passenger ID, seat ID, user ID, price, and payment status.
 
+You can look at SQL file that creates these table - FlyAirSql.sql .
+
 **Connection**
+
 Connection is secured by Singleton design pattern. Connection specifics are written and stored in App.conf, configuration file. 
 Login is required. UserId in this file is 'student' and password 'plane'. In case you want to access admin part in UI console part use Admin mode. Password for this part is 'admin'.
 Admin part includes adding Planes, Flights and removing Users, Flights and Changing Flight departure time. 
+
+**Data**
+Only 3 tables include data. Tables flight.csv, planes.csv, seat.csv are located in bin/debug/net8.0 . 
 
 ## Usage
 
@@ -121,4 +127,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For any questions or comments, please reach out to me at:
 - **Email:** niki.polach@gmail.com
 - **LinkedIn:** https://linkedin.com/in/nikola-poláchová-905a342a2
+- **Moodle Private Contact** https://moodle.spsejecna.cz
 
