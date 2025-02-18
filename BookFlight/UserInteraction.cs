@@ -112,6 +112,7 @@ namespace BookFlight
             Console.WriteLine("3) My Reservations");
             Console.WriteLine("4) Change email");
             Console.WriteLine("5) See Flights");
+            Console.WriteLine("6) See Planes");
             string choice = Console.ReadLine();
 
             if (choice == "1")
@@ -159,21 +160,25 @@ namespace BookFlight
                 int id = int.Parse(Console.ReadLine());
                 db.RemoveReservation(id);
             }
-            else if(choice == "3")
+            else if (choice == "3")
             {
                 db.AllReservations(thisUser);
             }
-            else if(choice == "4")
+            else if (choice == "4")
             {
                 Console.WriteLine("Enter your username:");
-                string username = Console.ReadLine();   
+                string username = Console.ReadLine();
                 Console.WriteLine("What's your new email?");
                 string email = Console.ReadLine();
                 db.AlterUser(username, email);
             }
-            else if(choice == "5")
+            else if (choice == "5")
             {
                 db.AllFlights();
+            }
+            else if (choice == "6")
+            {
+                db.AllPlanes();
             }
             else
             {

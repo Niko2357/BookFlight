@@ -34,7 +34,6 @@ namespace BookFlight
                     dbs.ImportFlight("flight.csv", conn);
                     dbs.ImportSeat("seat.csv", conn);
                 }*/
-                dbs.AllFlights();
                 Console.WriteLine("1) Admin");
                 Console.WriteLine("2) Guest");
                 string choice = Console.ReadLine();
