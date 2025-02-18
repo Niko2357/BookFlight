@@ -127,4 +127,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For any questions or comments, please reach out to me at:
 - **Email:** niki.polach@gmail.com
 - **LinkedIn:** https://linkedin.com/in/nikola-poláchová-905a342a2
+- **Moodle Private Contact** https://moodle.spsejecna.cz
 
