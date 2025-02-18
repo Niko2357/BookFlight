@@ -118,7 +118,7 @@ namespace BookFlight
                 Console.WriteLine("Has this person already flown with us?");
                 string input = Console.ReadLine();
 
-                Console.WriteLine("What email should be the boarding pass send to?");
+                Console.WriteLine("What email should be the boarding pass send to? *every passenger should have their own email");
                 string email = Console.ReadLine();
                 string firstname = "";
                 string lastname = "";
