@@ -9,9 +9,9 @@ namespace BookFlight
 
             UserInteraction interact = new UserInteraction();
             Database dbs = new Database();
-            dbs.ImportPlanes("\\BookFlight\\BookFlight\\planes.csv");
-            dbs.ImportFlight("\\BookFlight\\BookFlight\\flight.csv");
-            dbs.ImportSeat("\\BookFlight\\BookFlight\\seat.csv");
+            dbs.ImportPlanes("planes.csv");
+            /*dbs.ImportFlight("\\BookFlight\\BookFlight\\flight.csv");
+            dbs.ImportSeat("\\BookFlight\\BookFlight\\seat.csv");*/
 
             try
             {
