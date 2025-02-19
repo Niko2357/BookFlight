@@ -39,10 +39,33 @@ BookFlight is a console application for managing flights, users, and reservation
    
 3. #### **Check the configuration**
    Check the App.config file and make sure it contains the correct values for connecting to the database.
+   **App Configuration my database**
+    ```xml
+    <?xml version="1.0" encoding="utf-8" ?>
+    <configuration>
+	<appSettings>
+		<add key="DataSource" value="193.85.203.188"/>
+		<add key="Database" value="FlyAir"/> <!-- database name-->
+		<add key="UserID" value="student"/> <!-- your name-->
+		<add key="Password" value="plane"/> <!-- your password-->
+	</appSettings>
+</configuration>
+    ```
+   **School database**
+   ```xml
+   <?xml version="1.0" encoding="utf-8" ?>
+    <configuration>
+	<appSettings>
+		<add key="DataSource" value="193.85.203.188"/>
+		<add key="Database" value="surname"/> <!-- database name-->
+		<add key="UserID" value="username"/> <!-- your name-->
+		<add key="Password" value="password"/> <!-- your password-->
+	</appSettings>
+</configuration>
+    ```
+5. #### **Build the project**
 
-4. #### **Build the project**
-
-5. #### **Run the application**
+6. #### **Run the application**
    Press F5 or click the "Start" button at the top of Visual Studio.
 
 
