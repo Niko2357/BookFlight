@@ -10,20 +10,19 @@ namespace BookFlight
             UserInteraction interact = new UserInteraction();
             Database dbs = new Database();
 
-            /*using (SqlConnection conn = new SqlConnection(connectionString))
-            {
+            /*SqlConnection conn = DBSingleton.GetInstance();
+            
             try
             {
-                conn.Open();
                 Console.WriteLine("Connected successfuly.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("No connection.");
             }
-            }
-            }*/
-
+            conn.Close();
+            */
+            
 
             try
             {

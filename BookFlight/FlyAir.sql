@@ -1,5 +1,4 @@
-﻿use FlyAir;
-
+﻿
 create table Plane(
 id int primary key,
 name varchar(50), 

@@ -31,6 +31,8 @@ namespace BookFlight
                 stringBuilder.ConnectTimeout = 30;
                 stringBuilder.TrustServerCertificate = true;
                 stringBuilder.Encrypt = true;
+                stringBuilder.IntegratedSecurity = false;
+
                 conn = new SqlConnection(stringBuilder.ConnectionString);
                 conn.Open();
             }
