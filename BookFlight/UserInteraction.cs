@@ -18,7 +18,7 @@ namespace BookFlight
         /// When choice is made, admin is asked needed information for method to perform wanted task. 
         /// All methods communicate with database and edit it. 
         /// </summary>
-        public void AdminPart()
+        public void AdminPart(SqlConnection conn)
         {
             Console.WriteLine("1) Add a Flight");
             Console.WriteLine("2) Delete a Flight");
@@ -30,8 +30,8 @@ namespace BookFlight
             {
                 Console.WriteLine("What's the flight number?");
                 string flnum = Console.ReadLine();
+                db.AllPlanes(conn);
                 Console.WriteLine("What plane will fly this? (id number)");
-                db.AllPlanes();
                 int plane = int.Parse(Console.ReadLine());
                 Console.WriteLine("What's departure date and time? (dd.mm.yyyy hh:mm:ss)");
                 DateTime dep = DateTime.Parse(Console.ReadLine());
@@ -43,45 +43,45 @@ namespace BookFlight
                 string arrPlace = Console.ReadLine();
 
                 Flight flight = new Flight(flnum, plane, dep, arr, depPlace, arrPlace);
-                db.AddFlight(flight);
+                db.AddFlight(flight, conn);
             }
             else if (choice == "2")
             {
-                db.AllFlights();
+                db.AllFlights(conn);
                 Console.WriteLine("What flight do you want to remove? (id number)");
                 int id = int.Parse(Console.ReadLine());
-                db.RemoveFlight(id);
+                db.RemoveFlight(id, conn);
             }
             else if (choice == "3")
             {
-                db.AllUsers();
+                db.AllUsers(conn);
                 Console.WriteLine("Which user would you like to remove?");
                 string username = Console.ReadLine();
 
-                db.RemoveUser(username);
+                db.RemoveUser(username, conn);
             }
             else if(choice == "4")
             {
-                db.AllFlights();
+                db.AllFlights(conn);
                 Console.WriteLine("Which flight time would you like to update? (id)");
                 int flightId = int.Parse(Console.ReadLine());
                 Console.WriteLine("What time will the plane depart? (dd.mm.yyyy hh:mm:ss)");
                 DateTime depart = DateTime.Parse(Console.ReadLine());
                 Console.WriteLine("What time will the plane arrive? (dd.mm.yyyy hh:mm:ss)");
                 DateTime arrive = DateTime.Parse(Console.ReadLine());
-                db.AlterFlight(flightId, depart, arrive);
+                db.AlterFlight(flightId, depart, arrive, conn);
             }
             else
             {
                 Console.WriteLine("That's not an option.");
-                AdminPart();
+                AdminPart(conn);
             }
         }
 
         /// <summary>
         /// Menu with options for user. User has to log in or register to proceed.
         /// </summary>
-        public void UserPart()
+        public void UserPart(SqlConnection conn)
         {
             Console.WriteLine("1) Register");
             Console.WriteLine("2) Log in");
@@ -89,23 +89,23 @@ namespace BookFlight
 
             if (choice == "1")
             {
-                Register();
+                Register(conn);
             }
             else if (choice == "2")
             {
-                LogIn();
+                LogIn(conn);
             }
             else
             {
                 Console.WriteLine("That's not an option.");
-                UserPart();
+                UserPart(conn);
             }
         }
 
         /// <summary>
         /// Menu with options for user. User can book a flight, cancel a flight, see his reservations or change email.
         /// </summary>
-        public void UserMainPart()
+        public void UserMainPart(SqlConnection conn)
         {
             Console.WriteLine("1) Book a Flight");
             Console.WriteLine("2) Cancel a Flight");
@@ -126,7 +126,7 @@ namespace BookFlight
                 string lastname = "";
                 DateOnly born = new DateOnly();
 
-                if (CheckPassenger(email))
+                if (CheckPassenger(email, conn))
                 {
                     Console.WriteLine("You will need passenger number to proceed with booking!");
                 }
@@ -140,29 +140,29 @@ namespace BookFlight
                     born = new DateOnly();
                 }
                 Passenger pas = new Passenger(firstname, lastname, born, email);
-                db.AddPassenger(pas);
+                db.AddPassenger(pas, conn);
 
-                db.AllFlights();
+                db.AllFlights(conn);
                 Console.WriteLine("What Flight would you like to book a reservation for? (id)");
                 int flightId = int.Parse(Console.ReadLine());
-                db.AllSeats();
+                db.AllSeats(conn);
                 Console.WriteLine("What seat would you like to book? (id)");
                 int seat = int.Parse(Console.ReadLine());
-                db.AlterSeat(seat);
+                db.AlterSeat(seat, conn);
                 Reservation res = new Reservation(flightId, pas.id, seat, thisUser, 2453.5, false);
 
-                db.AddReservation(res);
+                db.AddReservation(res, conn);
             }
             else if (choice == "2")
             {
-                db.AllReservations(thisUser);
+                db.AllReservations(thisUser, conn);
                 Console.WriteLine("Which reservation would you like to cancel? (id)");
                 int id = int.Parse(Console.ReadLine());
-                db.RemoveReservation(id);
+                db.RemoveReservation(id, conn);
             }
             else if (choice == "3")
             {
-                db.AllReservations(thisUser);
+                db.AllReservations(thisUser, conn);
             }
             else if (choice == "4")
             {
@@ -170,20 +170,20 @@ namespace BookFlight
                 string username = Console.ReadLine();
                 Console.WriteLine("What's your new email?");
                 string email = Console.ReadLine();
-                db.AlterUser(username, email);
+                db.AlterUser(username, email, conn);
             }
             else if (choice == "5")
             {
-                db.AllFlights();
+                db.AllFlights(conn);
             }
             else if (choice == "6")
             {
-                db.AllPlanes();
+                db.AllPlanes(conn);
             }
             else
             {
                 Console.WriteLine("That's not an option.");
-                UserPart();
+                UserPart(conn);
             }
         }
 
@@ -192,85 +192,61 @@ namespace BookFlight
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        public bool CheckPassenger(string email)
+        public bool CheckPassenger(string email, SqlConnection conn)
         {
-            SqlConnection conn = null;
-            using (conn = DBSingleton.GetInstance())
+            string com = "SELECT id FROM Passenger WHERE email = @email;";
+            using (SqlCommand cmd = new SqlCommand(com, conn))
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
+                cmd.Parameters.AddWithValue("@email", email);
+                object existingPasId = cmd.ExecuteScalar();
+                if (existingPasId != null)
                 {
-                    conn.Open();
+                    Console.WriteLine("Passengers number is " + existingPasId);
+                    return true;
                 }
-                string com = "SELECT id FROM Passenger WHERE email = @email;";
-                using (SqlCommand cmd = new SqlCommand(com, conn))
+                else
                 {
-                    cmd.Parameters.AddWithValue("@email", email);
-                    object existingPasId = cmd.ExecuteScalar();
-                    if (existingPasId != null)
-                    {
-                        Console.WriteLine("Passengers number is " + existingPasId);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-            }
-            if(conn.State == System.Data.ConnectionState.Open)
-            {
-                conn.Close();
             }
         }
 
         /// <summary>
         /// Logs in user. If input is correct, user is logged in and can proceed to UserMainPart.
         /// </summary>
-        public void LogIn()
+        public void LogIn(SqlConnection conn)
         {
             Console.WriteLine("Enter your username:");
             string username = Console.ReadLine();
             Console.WriteLine("Enter your password:");
             string password = Console.ReadLine();
 
-            SqlConnection conn = null;
-            using (conn = DBSingleton.GetInstance())
+            string com = "SELECT id FROM UserAccount WHERE username = @username AND password = @password;";
+            using (SqlCommand cmd = new SqlCommand(com, conn))
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+                //this part from chat
+                object result = cmd.ExecuteScalar();
+                if (result != null)
                 {
-                    conn.Open();
+                    int idUser = Convert.ToInt32(result);
+                    Console.WriteLine("You're now loged in.");
+                    thisUser = idUser;
+                    UserMainPart(conn);
                 }
-                string com = "SELECT id FROM UserAccount WHERE username = @username AND password = @password;";
-                using (SqlCommand cmd = new SqlCommand(com, conn))
+                else
                 {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-                    //this part from chat
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
-                    {
-                        int idUser = Convert.ToInt32(result);
-                        Console.WriteLine("You're now loged in.");
-                        thisUser = idUser;
-                        UserMainPart();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Wrong input.");
-                        UserPart();
-                    }
+                    Console.WriteLine("Wrong input.");
+                    UserPart(conn);
                 }
-            }
-            if(conn.State == System.Data.ConnectionState.Open)
-            {
-                conn.Close();
             }
         }
 
         /// <summary>
         /// Registers user. User has to input username, password and email.
         /// </summary>
-        public void Register()
+        public void Register(SqlConnection conn)
         {
             Console.WriteLine("Hello, here you can register.");
             Console.WriteLine("Your username:");
@@ -280,35 +256,23 @@ namespace BookFlight
             Console.WriteLine("Your email:");
             string email = Console.ReadLine();
 
-            SqlConnection conn = null;
-            using (conn = DBSingleton.GetInstance())
+            string com = "INSERT INTO UserAccount (username, password, email) VALUES (@username, @password, @email);";
+            using (SqlCommand cmd = new SqlCommand(com, conn))
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
-                string com = "INSERT INTO UserAccount (username, password, email) VALUES (@username, @password, @email);";
-                using (SqlCommand cmd = new SqlCommand(com, conn))
-                {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-                    cmd.Parameters.AddWithValue("@email", email);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+                cmd.Parameters.AddWithValue("@email", email);
 
-                    int rows = cmd.ExecuteNonQuery();
-                    if (rows > 0)
-                    {
-                        Console.WriteLine("You were successfuly registered. Please Log in");
-                        UserPart();
-                    }
-                    else
-                    {
-                        Console.WriteLine("Something went wrong :(");
-                    }
+                int rows = cmd.ExecuteNonQuery();
+                if (rows > 0)
+                {
+                    Console.WriteLine("You were successfuly registered. Please Log in");
+                    UserPart(conn);
                 }
-            }
-            if(conn.State == System.Data.ConnectionState.Open)
-            {
-                conn.Close();
+                else
+                {
+                    Console.WriteLine("Something went wrong :(");
+                }
             }
         }
     }
